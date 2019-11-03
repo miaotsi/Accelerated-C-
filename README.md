@@ -24,7 +24,7 @@
 
 设计while语句：保证　while　第一句开始时条件为真实情况，下一句开始前条件也为真实情况。
 输出一行：int 的长度无法满足时，可以输入 string 表示长字符.
-逻辑运算符：|| && 逻辑运算符左优先，算数运算符具有优先权，先计算 || 两侧的内容，再进行 || 运算。
+逻辑运算符：|| && 逻辑运算符是左结合的。如果程序发现 || 的左操作数的值为真，它就根本不会再去计算右操作数。，算数运算符具有优先权，先计算 || 两侧的内容，再进行 || 运算。
 for 循环体：从0开始，能够直观的看出循环次数和结束条件。
 
 *Nov 2
@@ -48,6 +48,5 @@ Output an unknown number of rows: control with while (r! s row)
 
 Design the while statement: Ensure that the condition at the beginning of the first sentence is the real situation, and the condition is the real situation before the next loop begins.
 Output one line: When the length of the int is not satisfied, you can enter a string for a long character
-Logical Operators: The logic operator is left-first, the arithmetic operator has priority, and the first calculation is calculated. The contents on both sides, and then the Operation.
-For Loop Body: Starting from 0, we can see intuitively the number of cycles and the closing conditions.
-
+Logical Operators: The logic operator is left-bound. If the program has found that the program has found that the the value of the left operator of || is true, it does not even calculate the number of right operators. The arithmetic operator has priority. The the arithmatic operators go first, and then the logical operation.
+For Loop Body: Starting from 0, you can see intuitively the number of cycles and the closing conditions.
