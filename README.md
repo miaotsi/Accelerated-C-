@@ -4,7 +4,6 @@
 ***学习笔记：
 
 *Nov 2
-
 **使用字符串
 
 注释：//   /* */
@@ -20,7 +19,13 @@
 
 输出数目未知的行：用while(r != rows)控制
 
+*Nov 3
+**循环和计数
 
+设计while语句：保证　while　第一句开始时条件为真实情况，下一句开始前条件也为真实情况。
+输出一行：int 的长度无法满足时，可以输入 string 表示长字符
+
+*Nov 2
 **Using String 
 
 Notes: // /* */
@@ -30,7 +35,14 @@ Name space: Named spaces, such as "cv:Mat" are the equivalent expression of "Mat
 Expression: miaotsi.name, "." indicates that the latter is a property or function of the former.
 Statement: std:: string stars (10, '''); Then the result of stars.size() is 10, and the stars themselves contain ten '*'s.
 String direct quantity and output: std::string hello = "hello"; std:: string stars (100, '*'); std:: string name; All three represent string generation.
-  
+
+*Nov 3  
 **Loops and counters
 
 Output an unknown number of rows: control with while (r! s row)
+
+
+**Loops and counters
+
+Design the while statement: Ensure that the condition at the beginning of the first sentence is the real situation, and the condition is the real situation before the next loop begins.
+Output one line: When the length of the int is not satisfied, you can enter a string for a long character
