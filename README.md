@@ -27,6 +27,21 @@
 逻辑运算符：|| && 逻辑运算符是左结合的。如果程序发现 || 的左操作数的值为真，它就根本不会再去计算右操作数。，算数运算符具有优先权，先计算 || 两侧的内容，再进行 || 运算。
 for 循环体：从0开始，能够直观的看出循环次数和结束条件。
 
+*Nov 4
+**计算学生成绩
+
+小数定义时，一般用　float ，不用较短的　float。
+如果两个以上的字符串直接量仅仅是被空白符分隔开的话，这些字符串会被自动连接到一起。因此，对于长句，可以写成多行，便于阅读。
+定义变量时，要确定初始值。
+setprecision(int) 是一个控制器，setprecision(3) 表示十进制小数点前有两位有效数，小数点后有一位。setprecision(int)　对后面的所有输出都产生作用，因此往往需要恢复原来的精度。用　streamsize prec = cout.precision() 记录之前的精度，用 setprecision(prec) 从新的精度恢复成原始值。
+if (cin >> x) 和　cin>>x; if(cin) 效果相同。cin 可以通过变换，返回成 bool　值。
+
+用中值代替平均值：
+vector(double)　是向量，向量是存储数据集合的容器，double 是向量里面数据的类型。
+vector(double)　homework; homework.push_back(x) 函数的作用是添加一个新的元素到向量的末尾。
+typedef vector<double>::size_type vec_sz; vec_sz size = homework.size(); 使用了库定义的　size_type，　避免使用局部变量。vrc_sz　是　vector<double>::size_type 的替代名。
+sort(homework.begin(), homework.end()); sort 函数把容器中的数据重新排序成非递减序列。homework.begin()　指示了向量中第一个元素，　homework.end()　指向紧跟在homework 最后一个元素之后的位置。
+
 *Nov 2
 **Using String 
 
@@ -50,3 +65,18 @@ Design the while statement: Ensure that the condition at the beginning of the fi
 Output one line: When the length of the int is not satisfied, you can enter a string for a long character
 Logical Operators: The logic operator is left-bound. If the program has found that the program has found that the the value of the left operator of || is true, it does not even calculate the number of right operators. The arithmetic operator has priority. The the arithmatic operators go first, and then the logical operation.
 For Loop Body: Starting from 0, you can see intuitively the number of cycles and the closing conditions.
+
+*Nov 4
+**Calculating grades
+
+When decimals are defined, floats are generally used in stead of float, which is smaller.
+If the more than two strings are separated simply  by a blank character, the strings are automatically connected to together. Therefore, for long sentences, we can write multiple lines for easy reading.
+When a variable is defined, the initial value should be given.
+Setprecision (int) is a controller, and setprecision (3) means that there are two valid numbers before the decimal point and one afer. Setprecision (int) acts on all subsequent outputs, so it is often necessary to restore the original accuracy. Record the previous precision with streamsize prec = cout.precision(), and restore the original value with setprecision(prec).
+"If (cin>>x)" and "cin >> x; If (cin);" have the same effect. Cin can be transformed to return to a bool value.
+
+Replace the mean with the median:
+vector (double) is a vector, a vector is a container that stores a collection of data, and double is the type of data within the vector.
+vector (double) homework; The "homework.push_back (x)" function is to add a new element to the end of the vector.
+"typedef vector<double>::size_type vec_sz; vec_sz size = homework.size();" uses library-defined "size_type" to avoid local variables. "vrc_sz" is an alternative name for "vector<double>::size_type".
+sort (homework.begin), homework.end()); The sort function reorders the data in the container into a non-decreasing sequence. homework.begin() indicates the first element in the vector, and homework.end() points to the position immediately after the last element of homework.
