@@ -41,6 +41,12 @@ vector(double)　是向量，向量是存储数据集合的容器，double 是�
 vector(double)　homework; homework.push_back(x) 函数的作用是添加一个新的元素到向量的末尾。
 typedef vector<double>::size_type vec_sz; vec_sz size = homework.size(); 使用了库定义的　size_type，　避免使用局部变量。vrc_sz　是　vector<double>::size_type 的替代名。
 sort(homework.begin(), homework.end()); sort 函数把容器中的数据重新排序成非递减序列。homework.begin()　指示了向量中第一个元素，　homework.end()　指向紧跟在homework 最后一个元素之后的位置。
+  
+*Nov 5
+**计算学生成绩
+
+sort() 函数仅仅调换了原容器中的元素值的相对顺序，而不是创建一个新的容器来存储排序后的结果。
+找出中位数：　vec_sz mid = size/2; double median; median = size % 2 == 0? (homework[mid] + homework[mid-1])/2 : homework[mid]; 如果向量中所含数据的个数是偶数，那么中位数是第几个？是第　mid 个和　mid+1 个的平均值。用索引来表示，因为索引从零开始，所以是　homework[mid] 和 homework[mid-1]。如果是奇数，那么中位数是第 (size+1)/2 个, 用索引表示是 homework[(size-1)/2] = homework[mid]。mid 是　size/2 向下取整的结果。
 
 *Nov 2
 **Using String 
@@ -80,3 +86,9 @@ vector (double) is a vector, a vector is a container that stores a collection of
 vector (double) homework; The "homework.push_back (x)" function is to add a new element to the end of the vector.
 "typedef vector<double>::size_type vec_sz; vec_sz size = homework.size();" uses library-defined "size_type" to avoid local variables. "vrc_sz" is an alternative name for "vector<double>::size_type".
 sort (homework.begin), homework.end()); The sort function reorders the data in the container into a non-decreasing sequence. homework.begin() indicates the first element in the vector, and homework.end() points to the position immediately after the last element of homework.
+  
+*Nov 5
+**Calculating grades
+
+The "sort()" function simply adjusts the relative order of the element values in the original container, rather than creating a new container to store the sorted results.
+Find out the median: "vec_sz mid = size/2; double median; median = size % 2 == 0? (homework[mid] + homework[mid-1])/2 : homework[mid];" If the number of data contained in the vector is even, what is the median number? It's the average of No.mid and No.(mid+1). Because the index starts from zero, it is the average of homework[mid] and homework[mid-1]. If it's an odd number, then the median is No.(size+1)/2, which is indexed as "homework[(size-1)/2] = homework[mid]". Mid is the result of size/2 rounding down.
