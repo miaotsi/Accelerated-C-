@@ -37,7 +37,7 @@ setprecision(int) 是一个控制器，setprecision(3) 表示十进制小数点�
 if (cin >> x) 和　cin>>x; if(cin) 效果相同。cin 可以通过变换，返回成 bool　值。
 
 用中值代替平均值：
-vector(double)　是向量，向量是存储数据集合的容器，double 是向量里面数据的类型。
+vector(double)　是向量，向量是存储数据集合的容器，可以根据需要增长以容纳其输入。double 是向量里面数据的类型。
 vector(double)　homework; homework.push_back(x) 函数的作用是添加一个新的元素到向量的末尾。
 typedef vector<double>::size_type vec_sz; vec_sz size = homework.size(); 使用了库定义的　size_type，　避免使用局部变量。vrc_sz　是　vector<double>::size_type 的替代名。
 sort(homework.begin(), homework.end()); sort 函数把容器中的数据重新排序成非递减序列。homework.begin()　指示了向量中第一个元素，　homework.end()　指向紧跟在homework 最后一个元素之后的位置。
@@ -82,7 +82,7 @@ Setprecision (int) is a controller, and setprecision (3) means that there are tw
 "If (cin>>x)" and "cin >> x; If (cin);" have the same effect. Cin can be transformed to return to a bool value.
 
 Replace the mean with the median:
-vector (double) is a vector, a vector is a container that stores a collection of data, and double is the type of data within the vector.
+vector (double) is a vector, a vector is a container that stores a collection of data, a vector can grow bigger as needed to accommodate its input. Double is the type of data within the vector.
 vector (double) homework; The "homework.push_back (x)" function is to add a new element to the end of the vector.
 "typedef vector<double>::size_type vec_sz; vec_sz size = homework.size();" uses library-defined "size_type" to avoid local variables. "vrc_sz" is an alternative name for "vector<double>::size_type".
 sort (homework.begin), homework.end()); The sort function reorders the data in the container into a non-decreasing sequence. homework.begin() indicates the first element in the vector, and homework.end() points to the position immediately after the last element of homework.
