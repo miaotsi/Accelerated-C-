@@ -1,0 +1,39 @@
+菜鸟C++
+数据类型：宽字符型 wchar_t:typedef short int wchar_t,实际上的空间和short int 一样
+typedef 为一个已有的类型取一个新的名字。typedef type newname; 例如：feet是int的另一个名称：typedef int feet;feet distance；创建了一个整形变量distance.
+枚举类型：enumeration是由用户定义的若干枚举常量的集合。enum 枚举名{标识符[=整型常数],标识符[=整型常数],...,标识符[=整型常数]} 枚举变量;
+如果枚举没有初始化，即省掉“=整型常数”时，则从第一个标识符开始。例如，定义颜色枚举，变量c的类型为color.最后，c被赋值为“blue”.
+enum color {red, green, blue } c; c = blue;
+默认情况下，第一个名称的值为0，第二个为1，以此类推。但是也可以赋予特殊的值，例如：enum color {red, green = 5, blue};blue的值为6，因为默认下，每个名称都会比前面一个大1.red仍然是0.
+
+变量类型：当使用多个文件且只在其中一个文件中定义变量时（定义变量的文件在程序连接时是可用的），变量声明就显得非常有用。您可以使用extern 关键字在任何地方声明一个变量。虽然您可以在C++程序中多次声明一个变量，但变量只能在某个文件、函数或代码块中被定义一次。
+#include <iostream>
+using namespace std;
+ 
+// 变量声明
+extern int a, b;
+extern int c;
+extern float f;
+  
+int main ()
+{
+  // 变量定义
+  int a, b;
+  int c;
+  float f;
+ 
+  // 实际初始化
+  a = 10;
+  b = 20;
+  c = a + b;
+ 
+  cout << c << endl ;
+ 
+  f = 70.0/3.0;
+  cout << f << endl ;
+ 
+  return 0;
+}
+变量在头部就已经被声明，但它们是在主函数内被定义和初始化的。同样的，在函数声明时，提供一个函数名，而函数的实际定义则可以在任何地方进行。
+C++中的左值（Lvalues）:指向内存位置的表达式被称为左值（lvalue）表达式。左值可以出现在赋值号的左边或右边.和右值（Rvalues）:术语右值（rvalue）指的是存储在内存中某些地址的数值。右值是不能对其进行赋值的表达式，也就是说，右值可以出现在赋值号的右边，但不能出现在赋值号的左边。
+变量是左值，因此可以出现在赋值号的左边。数值型的字面值是右值，因此不能被赋值，不能出现在赋值号的左边。
