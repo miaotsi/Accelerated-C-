@@ -37,3 +37,839 @@ int main ()
 变量在头部就已经被声明，但它们是在主函数内被定义和初始化的。同样的，在函数声明时，提供一个函数名，而函数的实际定义则可以在任何地方进行。
 C++中的左值（Lvalues）:指向内存位置的表达式被称为左值（lvalue）表达式。左值可以出现在赋值号的左边或右边.和右值（Rvalues）:术语右值（rvalue）指的是存储在内存中某些地址的数值。右值是不能对其进行赋值的表达式，也就是说，右值可以出现在赋值号的右边，但不能出现在赋值号的左边。
 变量是左值，因此可以出现在赋值号的左边。数值型的字面值是右值，因此不能被赋值，不能出现在赋值号的左边。
+
+定义常量：C++有两种简单的定义常量的方式：使用#define 预处理器。使用const 关键字。#define identifier value. 
+#include <iostream>
+using namespace std;
+ 
+#define LENGTH 10   
+#define WIDTH  5
+#define NEWLINE '\n'
+ 
+int main()
+{
+   int area;  
+   
+   area = LENGTH * WIDTH;
+   cout << area;
+   cout << NEWLINE;
+   return 0;
+}
+
+C++ 修饰符类型：
+const	const 类型的对象在程序执行期间不能被修改改变。
+volatile	修饰符 volatile 告诉编译器不需要优化volatile声明的变量，让程序可以直接从内存中读取变量。对于一般的变量编译器会对变量进行优化，将内存中的变量值放在寄存器中以加快读写效率。
+restrict	由 restrict 修饰的指针是唯一一种访问它所指向的对象的方式。只有 C99 增加了新的类型限定符 restrict。
+
+C++ 存储类：
+存储类定义 C++ 程序中变量/函数的范围（可见性）和生命周期。这些说明符放置在它们所修饰的类型之前。下面列出 C++ 程序中可用的存储类：
+auto  register  static  extern  mutable  thread_local (C++11)
+
+auto 存储类：auto 关键字用于两种情况：声明变量时根据初始化表达式自动推断该变量的类型、声明函数时函数返回值的占位符。
+auto f=3.14;      //double
+auto s("hello");  //const char*
+auto z = new auto(9); // int*
+auto x1 = 5, x2 = 5.0, x3='r';//错误，必须是初始化为同一类型
+
+register 存储类：register 存储类用于定义存储在寄存器中而不是 RAM 中的局部变量。这意味着变量的最大尺寸等于寄存器的大小（通常是一个词），且不能对它应用一元的 '&' 运算符（因为它没有内存位置）。
+
+static 存储类：static 存储类指示编译器在程序的生命周期内保持局部变量的存在，而不需要在每次它进入和离开作用域时进行创建和销毁。因此，使用 static 修饰局部变量可以在函数调用之间保持局部变量的值。static 修饰符也可以应用于全局变量。当 static 修饰全局变量时，会使变量的作用域限制在声明它的文件内。
+
+在 C++ 中，当 static 用在类数据成员上时，会导致仅有一个该成员的副本被类的所有对象共享。
+#include <iostream>
+ 
+// 函数声明 
+void func(void);
+ 
+static int count = 10; /* 全局变量 */
+ 
+int main()
+{
+    while(count--)
+    {
+       func();
+    }
+    return 0;
+}
+// 函数定义
+void func( void )
+{
+    static int i = 5; // 局部静态变量
+    i++;
+    std::cout << "变量 i 为 " << i ;
+    std::cout << " , 变量 count 为 " << count << std::endl;
+}
+变量 i 为 6 , 变量 count 为 9
+变量 i 为 7 , 变量 count 为 8
+变量 i 为 8 , 变量 count 为 7
+变量 i 为 9 , 变量 count 为 6
+变量 i 为 10 , 变量 count 为 5
+变量 i 为 11 , 变量 count 为 4
+变量 i 为 12 , 变量 count 为 3
+变量 i 为 13 , 变量 count 为 2
+变量 i 为 14 , 变量 count 为 1
+变量 i 为 15 , 变量 count 为 0
+
+extern 存储类：extern 存储类用于提供一个全局变量的引用，全局变量对所有的程序文件都是可见的。当您使用 'extern' 时，对于无法初始化的变量，会把变量名指向一个之前定义过的存储位置。
+
+当您有多个文件且定义了一个可以在其他文件中使用的全局变量或函数时，可以在其他文件中使用 extern 来得到已定义的变量或函数的引用。可以这么理解，extern 是用来在另一个文件中声明一个全局变量或函数。
+
+extern 修饰符通常用于当有两个或多个文件共享相同的全局变量或函数的时候，如下所示：
+#include <iostream>
+ 
+int count ;
+extern void write_extern();
+ 
+int main()
+{
+   count = 5;
+   write_extern();
+}
+#include <iostream>
+ 
+extern int count;
+ 
+void write_extern(void)
+{
+   std::cout << "Count is " << count << std::endl;
+}
+在这里，第二个文件中的 extern 关键字用于声明已经在第一个文件 main.cpp 中定义的 count。现在 ，编译这两个文件，如下所示：
+g++ main.cpp support.cpp -o write
+这会产生 write 可执行程序，尝试执行 write，它会产生下列结果：
+./write
+Count is 5
+
+mutable 存储类
+mutable 说明符仅适用于类的对象，这将在本教程的最后进行讲解。它允许对象的成员替代常量。也就是说，mutable 成员可以通过 const 成员函数修改。
+
+thread_local 存储类
+使用 thread_local 说明符声明的变量仅可在它在其上创建的线程上访问。 变量在创建线程时创建，并在销毁线程时销毁。 每个线程都有其自己的变量副本。
+thread_local 说明符可以与 static 或 extern 合并。可以将 thread_local 仅应用于数据声明和定义，thread_local 不能用于函数声明或定义。
+thread_local int x;  // 命名空间下的全局变量
+class X
+{
+    static thread_local std::string s; // 类的static成员变量
+};
+static thread_local std::string X::s;  // X::s 是需要定义的
+ 
+void foo()
+{
+    thread_local std::vector<int> v;  // 本地变量
+}
+
+运算符：
+赋值运算符：
+<<=	左移且赋值运算符	C <<= 2 等同于 C = C << 2
+>>=	右移且赋值运算符	C >>= 2 等同于 C = C >> 2
+&=	按位与且赋值运算符	C &= 2 等同于 C = C & 2
+^=	按位异或且赋值运算符	C ^= 2 等同于 C = C ^ 2
+|=	按位或且赋值运算符	C |= 2 等同于 C = C | 2
+
+杂项运算符：
+sizeof	sizeof 运算符返回变量的大小。例如，sizeof(a) 将返回 4，其中 a 是整数。
+Condition ? X : Y	条件运算符。如果 Condition 为真 ? 则值为 X : 否则值为 Y。
+,	逗号运算符会顺序执行一系列运算。整个逗号表达式的值是以逗号分隔的列表中的最后一个表达式的值。
+.（点）和 ->（箭头）	成员运算符用于引用类、结构和共用体的成员。
+Cast	强制转换运算符把一种数据类型转换为另一种数据类型。例如，int(2.2000) 将返回 2。
+&	指针运算符 & 返回变量的地址。例如 &a; 将给出变量的实际地址。
+*	指针运算符 * 指向一个变量。例如，*var; 将指向变量 var。
+
+函数
+函数参数：
+调用类型	描述
+传值调用	该方法把参数的实际值复制给函数的形式参数。在这种情况下，修改函数内的形式参数对实际参数没有影响。
+指针调用	该方法把参数的地址复制给形式参数。在函数内，该地址用于访问调用中要用到的实际参数。这意味着，修改形式参数会影响实际参数。
+引用调用	该方法把参数的引用复制给形式参数。在函数内，该引用用于访问调用中要用到的实际参数。这意味着，修改形式参数会影响实际参数。
+默认情况下，C++ 使用传值调用来传递参数。一般来说，这意味着函数内的代码不能改变用于调用函数的参数。
+
+Lambda 函数与表达式：C++11 提供了对匿名函数的支持,称为 Lambda 函数(也叫 Lambda 表达式)。
+Lambda 表达式把函数看作对象。Lambda 表达式可以像对象一样使用，比如可以将它们赋给变量和作为参数传递，还可以像函数一样对其求值。
+Lambda 表达式本质上与函数声明非常类似。Lambda 表达式具体形式如下:[capture](parameters)->return-type{body}
+例如：[](int x, int y){ return x < y ; }
+如果没有返回值可以表示为：[capture](parameters){body}
+例如：[]{ ++global_x; };
+在一个更为复杂的例子中，返回类型可以被明确的指定如下：
+[](int x, int y) -> int { int z = x + y; return z + x; };
+如果 lambda 函数没有传回值（例如 void），其返回类型可被完全忽略。
+在Lambda表达式内可以访问当前作用域的变量，这是Lambda表达式的闭包（Closure）行为。 与JavaScript闭包不同，C++变量传递有传值和传引用的区别。可以通过前面的[]来指定：
+[]      // 沒有定义任何变量。使用未定义变量会引发错误。
+[x, &y] // x以传值方式传入（默认），y以引用方式传入。
+[&]     // 任何被使用到的外部变量都隐式地以引用方式加以引用。
+[=]     // 任何被使用到的外部变量都隐式地以传值方式加以引用。
+[&, x]  // x显式地以传值方式加以引用。其余变量以引用方式加以引用。
+[=, &z] // z显式地以引用方式加以引用。其余变量以传值方式加以引用。
+另外有一点需要注意。对于[=]或[&]的形式，lambda 表达式可以直接使用 this 指针。但是，对于[]的形式，如果要使用 this 指针，必须显式传入：
+[this]() { this->someFunc(); }();
+
+数组
+初始化数组：在 C++ 中，您可以逐个初始化数组，也可以使用一个初始化语句，如下所示：
+double balance[5] = {1000.0, 2.0, 3.4, 7.0, 50.0};
+大括号 { } 之间的值的数目不能大于我们在数组声明时在方括号 [ ] 中指定的元素数目。
+如果您省略掉了数组的大小，数组的大小则为初始化时元素的个数。因此，如果：
+double balance[] = {1000.0, 2.0, 3.4, 7.0, 50.0};
+您将创建一个数组，它与前一个实例中所创建的数组是完全相同的。下面是一个为数组中某个元素赋值的实例：
+balance[4] = 50.0;
+上述的语句把数组中第五个元素的值赋为 50.0。
+
+C++数组详解：
+多维数组	C++ 支持多维数组。多维数组最简单的形式是二维数组。
+指向数组的指针	您可以通过指定不带索引的数组名称来生成一个指向数组中第一个元素的指针。
+传递数组给函数	您可以通过指定不带索引的数组名称来给函数传递一个指向数组的指针。
+从函数返回数组	C++ 允许从函数返回数组。
+
+C++字符串：
+C风格字符串：C 风格的字符串起源于 C 语言，并在 C++ 中继续得到支持。字符串实际上是使用 null 字符 '\0' 终止的一维字符数组。因此，一个以 null 结尾的字符串，包含了组成字符串的字符。
+下面的声明和初始化创建了一个 "Hello" 字符串。由于在数组的末尾存储了空字符，所以字符数组的大小比单词 "Hello" 的字符数多一个。
+char greeting[6] = {'H', 'e', 'l', 'l', 'o', '\0'};
+依据数组初始化规则，您可以把上面的语句写成以下语句：
+char greeting[] = "Hello";
+#include <iostream>
+#include <cstring>
+ 
+using namespace std;
+ 
+int main ()
+{
+   char str1[11] = "Hello";
+   char str2[11] = "World";
+   char str3[11];
+   int  len ;
+ 
+   // 复制 str1 到 str3
+   strcpy( str3, str1);
+   cout << "strcpy( str3, str1) : " << str3 << endl;
+ 
+   // 连接 str1 和 str2
+   strcat( str1, str2);
+   cout << "strcat( str1, str2): " << str1 << endl;
+ 
+   // 连接后，str1 的总长度
+   len = strlen(str1);
+   cout << "strlen(str1) : " << len << endl;
+ 
+   return 0;
+}
+当上面的代码被编译和执行时，它会产生下列结果：
+strcpy( str3, str1) : Hello
+strcat( str1, str2): HelloWorld
+strlen(str1) : 10
+
+C++中的String类：C++ 标准库提供了 string 类类型，支持上述所有的操作，另外还增加了其他更多的功能。
+#include <iostream>
+#include <string>
+ 
+using namespace std;
+ 
+int main ()
+{
+   string str1 = "Hello";
+   string str2 = "World";
+   string str3;
+   int  len ;
+ 
+   // 复制 str1 到 str3
+   str3 = str1;
+   cout << "str3 : " << str3 << endl;
+ 
+   // 连接 str1 和 str2
+   str3 = str1 + str2;
+   cout << "str1 + str2 : " << str3 << endl;
+ 
+   // 连接后，str3 的总长度
+   len = str3.size();
+   cout << "str3.size() :  " << len << endl;
+ 
+   return 0;
+}
+当上面的代码被编译和执行时，它会产生下列结果：
+str3 : Hello
+str1 + str2 : HelloWorld
+str3.size() :  10
+
+指针
+C++ 中使用指针
+使用指针时会频繁进行以下几个操作：定义一个指针变量、把变量地址赋值给指针、访问指针变量中可用地址的值。这些是通过使用一元运算符 * 来返回位于操作数所指定地址的变量的值。
+#include <iostream>
+ 
+using namespace std;
+ 
+int main ()
+{
+   int  var = 20;   // 实际变量的声明
+   int  *ip;        // 指针变量的声明
+ 
+   ip = &var;       // 在指针变量中存储 var 的地址
+ 
+   cout << "Value of var variable: ";
+   cout << var << endl;
+ 
+   // 输出在指针变量中存储的地址
+   cout << "Address stored in ip variable: ";
+   cout << ip << endl;
+ 
+   // 访问指针中地址的值
+   cout << "Value of *ip variable: ";
+   cout << *ip << endl;
+ 
+   return 0;
+}
+当上面的代码被编译和执行时，它会产生下列结果：
+
+Value of var variable: 20
+Address stored in ip variable: 0xbfc601ac
+Value of *ip variable: 20
+
+C++ 指针详解：
+C++ Null 指针	C++ 支持空指针。NULL 指针是一个定义在标准库中的值为零的常量。
+C++ 指针的算术运算	可以对指针进行四种算术运算：++、--、+、-
+C++ 指针 vs 数组	指针和数组之间有着密切的关系。
+C++ 指针数组	可以定义用来存储指针的数组。
+C++ 指向指针的指针	C++ 允许指向指针的指针。
+C++ 传递指针给函数	通过引用或地址传递参数，使传递的参数在调用函数中被改变。
+C++ 从函数返回指针	C++ 允许函数返回指针到局部变量、静态变量和动态内存分配。
+
+C++ 引用
+引用变量是一个别名，也就是说，它是某个已存在变量的另一个名字。一旦把引用初始化为某个变量，就可以使用该引用名称或变量名称来指向变量。
+C++ 引用 vs 指针
+引用很容易与指针混淆，它们之间有三个主要的不同：
+不存在空引用。引用必须连接到一块合法的内存。
+一旦引用被初始化为一个对象，就不能被指向到另一个对象。指针可以在任何时候指向到另一个对象。
+引用必须在创建时被初始化。指针可以在任何时间被初始化。
+C++ 中创建引用
+试想变量名称是变量附属在内存位置中的标签，您可以把引用当成是变量附属在内存位置中的第二个标签。因此，您可以通过原始变量名称或引用来访问变量的内容。例如：
+int i = 17;
+我们可以为 i 声明引用变量，如下所示：
+int&  r = i;
+double& s = d;
+在这些声明中，& 读作引用。因此，第一个声明可以读作 "r 是一个初始化为 i 的整型引用"，第二个声明可以读作 "s 是一个初始化为 d 的 double 型引用"。
+#include <iostream>
+ 
+using namespace std;
+ 
+int main ()
+{
+   // 声明简单的变量
+   int    i;
+   double d;
+ 
+   // 声明引用变量
+   int&    r = i;
+   double& s = d;
+   
+   i = 5;
+   cout << "Value of i : " << i << endl;
+   cout << "Value of i reference : " << r  << endl;
+ 
+   d = 11.7;
+   cout << "Value of d : " << d << endl;
+   cout << "Value of d reference : " << s  << endl;
+   
+   return 0;
+}
+Value of i : 5
+Value of i reference : 5
+Value of d : 11.7
+Value of d reference : 11.7
+把引用作为参数	C++ 支持把引用作为参数传给函数，这比传一般的参数更安全。
+把引用作为返回值	可以从 C++ 函数中返回引用，就像返回其他数据类型一样。
+
+１	time_t time(time_t *time);
+该函数返回系统的当前日历时间，自 1970 年 1 月 1 日以来经过的秒数。如果系统没有时间，则返回 .1。
+2	char *ctime(const time_t *time);
+该返回一个表示当地时间的字符串指针，字符串形式 day month year hours:minutes:seconds year\n\0。
+3	struct tm *localtime(const time_t *time);
+该函数返回一个指向表示本地时间的 tm 结构的指针。
+4	clock_t clock(void);
+该函数返回程序执行起（一般为程序的开头），处理器时钟所使用的时间。如果时间不可用，则返回 .1。
+5	char * asctime ( const struct tm * time );
+该函数返回一个指向字符串的指针，字符串包含了 time 所指向结构中存储的信息，返回形式为：day month date hours:minutes:seconds year\n\0。
+6	struct tm *gmtime(const time_t *time);
+该函数返回一个指向 time 的指针，time 为 tm 结构，用协调世界时（UTC）也被称为格林尼治标准时间（GMT）表示。
+7	time_t mktime(struct tm *time);
+该函数返回日历时间，相当于 time 所指向结构中存储的时间。
+8	double difftime ( time_t time2, time_t time1 );
+该函数返回 time1 和 time2 之间相差的秒数。
+9	size_t strftime();
+该函数可用于格式化日期和时间为指定的格式。
+#include <iostream>
+#include <ctime>
+ 
+using namespace std;
+ 
+int main( )
+{
+   // 基于当前系统的当前日期/时间
+   time_t now = time(0);
+   
+   // 把 now 转换为字符串形式
+   char* dt = ctime(&now);
+ 
+   cout << "本地日期和时间：" << dt << endl;
+ 
+   // 把 now 转换为 tm 结构
+   tm *gmtm = gmtime(&now);
+   dt = asctime(gmtm);
+   cout << "UTC 日期和时间："<< dt << endl;
+}
+本地日期和时间：Sat Jan  8 20:07:41 2011
+UTC 日期和时间：Sun Jan  9 03:07:41 2011
+
+使用结构 tm 格式化时间:
+tm 结构在 C/C++ 中处理日期和时间相关的操作时，显得尤为重要。tm 结构以 C 结构的形式保存日期和时间。大多数与时间相关的函数都使用了 tm 结构。
+#include <iostream>
+#include <ctime>
+ 
+using namespace std;
+ 
+int main( )
+{
+   // 基于当前系统的当前日期/时间
+   time_t now = time(0);
+ 
+   cout << "1970 到目前经过秒数:" << now << endl;
+ 
+   tm *ltm = localtime(&now);
+ 
+   // 输出 tm 结构的各个组成部分
+   cout << "年: "<< 1900 + ltm->tm_year << endl;
+   cout << "月: "<< 1 + ltm->tm_mon<< endl;
+   cout << "日: "<<  ltm->tm_mday << endl;
+   cout << "时间: "<< ltm->tm_hour << ":";
+   cout << ltm->tm_min << ":";
+   cout << ltm->tm_sec << endl;
+}
+1970 到目前时间:1503564157
+年: 2017
+月: 8
+日: 24
+时间: 16:42:37
+
+C++ 基本的输入输出
+标准日志流（clog）
+预定义的对象 clog 是 iostream 类的一个实例。clog 对象附属到标准错误设备，通常也是显示屏，但是 clog 对象是缓冲的。这意味着每个流插入到 clog 都会先存储在缓冲在，直到缓冲填满或者缓冲区刷新时才会输出。
+
+clog 也是与流插入运算符 << 结合使用的，如下所示：
+
+实例
+#include <iostream>
+ 
+using namespace std;
+ 
+int main( )
+{
+   char str[] = "Unable to read....";
+ 
+   clog << "Error message : " << str << endl;
+}
+当上面的代码被编译和执行时，它会产生下列结果：
+Error message : Unable to read....
+
+#include <iostream>
+#include <iomanip>
+using namespace std;
+int main()
+{
+    cout<<setiosflags(ios::left|ios::showpoint);  // 设左对齐，以一般实数方式显示
+    cout.precision(5);       // 设置除小数点外有五位有效数字 
+    cout<<123.456789<<endl;
+    cout.width(10);          // 设置显示域宽10 
+    cout.fill('*');          // 在显示区域空白处用*填充
+    cout<<resetiosflags(ios::left);  // 清除状态左对齐
+    cout<<setiosflags(ios::right);   // 设置右对齐
+    cout<<123.456789<<endl;
+    cout<<setiosflags(ios::left|ios::fixed);    // 设左对齐，以固定小数位显示
+    cout.precision(3);    // 设置实数显示三位小数
+    cout<<999.123456<<endl; 
+    cout<<resetiosflags(ios::left|ios::fixed);  //清除状态左对齐和定点格式
+    cout<<setiosflags(ios::left|ios::scientific);    //设置左对齐，以科学技术法显示 
+    cout.precision(3);   //设置保留三位小数
+    cout<<123.45678<<endl;
+    return 0; 
+}
+123.46
+****123.46
+999.123
+1.235e+02
+setiosflags(ios::fixed) 固定的浮点显示 
+setiosflags(ios::scientific) 指数表示 
+setiosflags(ios::left) 左对齐 
+setiosflags(ios::right) 右对齐 
+setiosflags(ios::skipws 忽略前导空白 
+setiosflags(ios::uppercase) 16进制数大写输出 
+setiosflags(ios::lowercase) 16进制小写输出 
+setiosflags(ios::showpoint) 强制显示小数点 
+setiosflags(ios::showpos) 强制显示符号 
+
+C++ 数据结构:
+定义结构:
+为了定义结构，您必须使用 struct 语句。struct 语句定义了一个包含多个成员的新的数据类型，struct 语句的格式如下：
+struct type_name {
+member_type1 member_name1;
+member_type2 member_name2;
+member_type3 member_name3;
+.
+.
+} object_names;
+type_name 是结构体类型的名称，member_type1 member_name1 是标准的变量定义，比如 int i; 或者 float f; 或者其他有效的变量定义。在结构定义的末尾，最后一个分号之前，您可以指定一个或多个结构变量，这是可选的。
+下面是声明一个结构体类型 Books，变量为 book：
+struct Books
+{
+   char  title[50];
+   char  author[50];
+   char  subject[100];
+   int   book_id;
+} book;
+
+访问结构成员:
+#include <iostream>
+#include <cstring>
+ 
+using namespace std;
+ 
+// 声明一个结构体类型 Books 
+struct Books
+{
+   char  title[50];
+   char  author[50];
+   char  subject[100];
+   int   book_id;
+};
+ 
+int main( )
+{
+   Books Book1;        // 定义结构体类型 Books 的变量 Book1
+   Books Book2;        // 定义结构体类型 Books 的变量 Book2
+ 
+   // Book1 详述
+   strcpy( Book1.title, "C++ 教程");
+   strcpy( Book1.author, "Runoob"); 
+   strcpy( Book1.subject, "编程语言");
+   Book1.book_id = 12345;
+ 
+   // Book2 详述
+   strcpy( Book2.title, "CSS 教程");
+   strcpy( Book2.author, "Runoob");
+   strcpy( Book2.subject, "前端技术");
+   Book2.book_id = 12346;
+ 
+   // 输出 Book1 信息
+   cout << "第一本书标题 : " << Book1.title <<endl;
+   cout << "第一本书作者 : " << Book1.author <<endl;
+   cout << "第一本书类目 : " << Book1.subject <<endl;
+   cout << "第一本书 ID : " << Book1.book_id <<endl;
+ 
+   // 输出 Book2 信息
+   cout << "第二本书标题 : " << Book2.title <<endl;
+   cout << "第二本书作者 : " << Book2.author <<endl;
+   cout << "第二本书类目 : " << Book2.subject <<endl;
+   cout << "第二本书 ID : " << Book2.book_id <<endl;
+ 
+   return 0;
+}
+第一本书标题 : C++ 教程
+第一本书作者 : Runoob
+第一本书类目 : 编程语言
+第一本书 ID : 12345
+第二本书标题 : CSS 教程
+第二本书作者 : Runoob
+第二本书类目 : 前端技术
+第二本书 ID : 12346
+
+结构作为函数参数:
+#include <iostream>
+#include <cstring>
+ 
+using namespace std;
+void printBook( struct Books book );
+ 
+// 声明一个结构体类型 Books 
+struct Books
+{
+   char  title[50];
+   char  author[50];
+   char  subject[100];
+   int   book_id;
+};
+ 
+int main( )
+{
+   Books Book1;        // 定义结构体类型 Books 的变量 Book1
+   Books Book2;        // 定义结构体类型 Books 的变量 Book2
+ 
+    // Book1 详述
+   strcpy( Book1.title, "C++ 教程");
+   strcpy( Book1.author, "Runoob"); 
+   strcpy( Book1.subject, "编程语言");
+   Book1.book_id = 12345;
+ 
+   // Book2 详述
+   strcpy( Book2.title, "CSS 教程");
+   strcpy( Book2.author, "Runoob");
+   strcpy( Book2.subject, "前端技术");
+   Book2.book_id = 12346;
+ 
+   // 输出 Book1 信息
+   printBook( Book1 );
+ 
+   // 输出 Book2 信息
+   printBook( Book2 );
+ 
+   return 0;
+}
+void printBook( struct Books book )
+{
+   cout << "书标题 : " << book.title <<endl;
+   cout << "书作者 : " << book.author <<endl;
+   cout << "书类目 : " << book.subject <<endl;
+   cout << "书 ID : " << book.book_id <<endl;
+}
+书标题 : C++ 教程
+书作者 : Runoob
+书类目 : 编程语言
+书 ID : 12345
+书标题 : CSS 教程
+书作者 : Runoob
+书类目 : 前端技术
+书 ID : 12346
+
+指向结构的指针:
+您可以定义指向结构的指针，方式与定义指向其他类型变量的指针相似，如下所示：
+struct Books *struct_pointer;
+现在，您可以在上述定义的指针变量中存储结构变量的地址。为了查找结构变量的地址，请把 & 运算符放在结构名称的前面，如下所示：
+struct_pointer = &Book1;
+为了使用指向该结构的指针访问结构的成员，您必须使用 -> 运算符，如下所示：
+struct_pointer->title;
+
+#include <iostream>
+#include <cstring>
+ 
+using namespace std;
+void printBook( struct Books *book );
+ 
+struct Books
+{
+   char  title[50];
+   char  author[50];
+   char  subject[100];
+   int   book_id;
+};
+ 
+int main( )
+{
+   Books Book1;        // 定义结构体类型 Books 的变量 Book1
+   Books Book2;        // 定义结构体类型 Books 的变量 Book2
+ 
+    // Book1 详述
+   strcpy( Book1.title, "C++ 教程");
+   strcpy( Book1.author, "Runoob"); 
+   strcpy( Book1.subject, "编程语言");
+   Book1.book_id = 12345;
+ 
+   // Book2 详述
+   strcpy( Book2.title, "CSS 教程");
+   strcpy( Book2.author, "Runoob");
+   strcpy( Book2.subject, "前端技术");
+   Book2.book_id = 12346;
+ 
+   // 通过传 Book1 的地址来输出 Book1 信息
+   printBook( &Book1 );
+ 
+   // 通过传 Book2 的地址来输出 Book2 信息
+   printBook( &Book2 );
+ 
+   return 0;
+}
+// 该函数以结构指针作为参数
+void printBook( struct Books *book )
+{
+   cout << "书标题  : " << book->title <<endl;
+   cout << "书作者 : " << book->author <<endl;
+   cout << "书类目 : " << book->subject <<endl;
+   cout << "书 ID : " << book->book_id <<endl;
+}
+书标题  : C++ 教程
+书作者 : Runoob
+书类目 : 编程语言
+书 ID : 12345
+书标题  : CSS 教程
+书作者 : Runoob
+书类目 : 前端技术
+书 ID : 12346
+
+typedef 关键字:
+下面是一种更简单的定义结构的方式，您可以为创建的类型取一个"别名"。例如：
+
+typedef struct Books
+{
+   char  title[50];
+   char  author[50];
+   char  subject[100];
+   int   book_id;
+}Books;
+现在，您可以直接使用 Books 来定义 Books 类型的变量，而不需要使用 struct 关键字。下面是实例：
+Books Book1, Book2;
+您可以使用 typedef 关键字来定义非结构类型，如下所示：
+typedef long int *pint32;
+pint32 x, y, z;
+x, y 和 z 都是指向长整型 long int 的指针。
+
+C++ 类 & 对象:
+C++ 类定义：
+类定义是以关键字 class 开头，后跟类的名称。类的主体是包含在一对花括号中。类定义后必须跟着一个分号或一个声明列表。例如，我们使用关键字 class 定义 Box 数据类型，如下所示：
+class Box
+{
+   public:
+      double length;   // 盒子的长度
+      double breadth;  // 盒子的宽度
+      double height;   // 盒子的高度
+};
+关键字 public 确定了类成员的访问属性。在类对象作用域内，公共成员在类的外部是可访问的。
+#include <iostream>
+ 
+using namespace std;
+ 
+class Box
+{
+   public:
+      double length;   // 长度
+      double breadth;  // 宽度
+      double height;   // 高度
+};
+ 
+int main( )
+{
+   Box Box1;        // 声明 Box1，类型为 Box
+   Box Box2;        // 声明 Box2，类型为 Box
+   double volume = 0.0;     // 用于存储体积
+ 
+   // box 1 详述
+   Box1.height = 5.0; 
+   Box1.length = 6.0; 
+   Box1.breadth = 7.0;
+ 
+   // box 2 详述
+   Box2.height = 10.0;
+   Box2.length = 12.0;
+   Box2.breadth = 13.0;
+ 
+   // box 1 的体积
+   volume = Box1.height * Box1.length * Box1.breadth;
+   cout << "Box1 的体积：" << volume <<endl;
+ 
+   // box 2 的体积
+   volume = Box2.height * Box2.length * Box2.breadth;
+   cout << "Box2 的体积：" << volume <<endl;
+   return 0;
+}
+Box1 的体积：210
+Box2 的体积：1560
+需要注意的是，私有的成员和受保护的成员不能使用直接成员访问运算符 (.) 来直接访问。
+
+类 & 对象详解：
+类成员函数	类的成员函数是指那些把定义和原型写在类定义内部的函数，就像类定义中的其他变量一样。类成员函数是类的一个成员，它可以操作类的任意对象，可以访问对象中的所有成员。
+使用成员函数来访问类的成员，而不是直接访问这些类的成员：
+class Box
+{
+   public:
+      double length;         // 长度
+      double breadth;        // 宽度
+      double height;         // 高度
+      double getVolume(void);// 返回体积
+};
+成员函数可以定义在类定义内部，或者单独使用范围解析运算符 :: 来定义。在类定义中定义的成员函数把函数声明为内联的，即便没有使用 inline 标识符。所以您可以按照如下方式定义 Volume() 函数：
+class Box
+{
+   public:
+      double length;      // 长度
+      double breadth;     // 宽度
+      double height;      // 高度
+   
+      double getVolume(void)
+      {
+         return length * breadth * height;
+      }
+};
+您也可以在类的外部使用范围解析运算符 :: 定义该函数，如下所示：
+double Box::getVolume(void)
+{
+    return length * breadth * height;
+}
+在这里，需要强调一点，在 :: 运算符之前必须使用类名。调用成员函数是在对象上使用点运算符（.），这样它就能操作与该对象相关的数据，如下所示：
+Box myBox;          // 创建一个对象 
+myBox.getVolume();  // 调用该对象的成员函数
+#include <iostream>
+ 
+using namespace std;
+ 
+class Box
+{
+   public:
+      double length;         // 长度
+      double breadth;        // 宽度
+      double height;         // 高度
+ 
+      // 成员函数声明
+      double getVolume(void);
+      void setLength( double len );
+      void setBreadth( double bre );
+      void setHeight( double hei );
+};
+ 
+// 成员函数定义
+double Box::getVolume(void)
+{
+    return length * breadth * height;
+}
+ 
+void Box::setLength( double len )
+{
+    length = len;
+}
+ 
+void Box::setBreadth( double bre )
+{
+    breadth = bre;
+}
+ 
+void Box::setHeight( double hei )
+{
+    height = hei;
+}
+ 
+// 程序的主函数
+int main( )
+{
+   Box Box1;                // 声明 Box1，类型为 Box
+   Box Box2;                // 声明 Box2，类型为 Box
+   double volume = 0.0;     // 用于存储体积
+ 
+   // box 1 详述
+   Box1.setLength(6.0); 
+   Box1.setBreadth(7.0); 
+   Box1.setHeight(5.0);
+ 
+   // box 2 详述
+   Box2.setLength(12.0); 
+   Box2.setBreadth(13.0); 
+   Box2.setHeight(10.0);
+ 
+   // box 1 的体积
+   volume = Box1.getVolume();
+   cout << "Box1 的体积：" << volume <<endl;
+ 
+   // box 2 的体积
+   volume = Box2.getVolume();
+   cout << "Box2 的体积：" << volume <<endl;
+   return 0;
+}
+Box1 的体积： 210
+Box2 的体积： 1560
+类访问修饰符	类成员可以被定义为 public、private 或 protected。默认情况下是定义为 private。
+
+构造函数 & 析构函数	类的构造函数是一种特殊的函数，在创建一个新的对象时调用。类的析构函数也是一种特殊的函数，在删除所创建的对象时调用。
+C++ 拷贝构造函数	拷贝构造函数，是一种特殊的构造函数，它在创建对象时，是使用同一类中之前创建的对象来初始化新创建的对象。
+C++ 友元函数	友元函数可以访问类的 private 和 protected 成员。
+C++ 内联函数	通过内联函数，编译器试图在调用函数的地方扩展函数体中的代码。
+C++ 中的 this 指针	每个对象都有一个特殊的指针 this，它指向对象本身。
+C++ 中指向类的指针	指向类的指针方式如同指向结构的指针。实际上，类可以看成是一个带有函数的结构。
+C++ 类的静态成员	类的数据成员和函数成员都可以被声明为静态的。
