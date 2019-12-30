@@ -48,6 +48,67 @@ sort(homework.begin(), homework.end()); sort 函数把容器中的数据重新�
 sort() 函数仅仅调换了原容器中的元素值的相对顺序，而不是创建一个新的容器来存储排序后的结果。
 找出中位数：　vec_sz mid = size/2; double median; median = size % 2 == 0? (homework[mid] + homework[mid-1])/2 : homework[mid]; 如果向量中所含数据的个数是偶数，那么中位数是第几个？是第　mid 个和　mid+1 个的平均值。用索引来表示，因为索引从零开始，所以是　homework[mid] 和 homework[mid-1]。如果是奇数，那么中位数是第 (size+1)/2 个, 用索引表示是 homework[(size-1)/2] = homework[mid]。mid 是　size/2 向下取整的结果。
 
+*Dec23
+**组织计算　L3
+
+抛出异常：比如throw domain_error("median of an empty vector");
+在我们调用一个函数的时候，我们可以把参数看做是初始值等于参数的局部变量。在调用函数的时候，参数同时也被复制到参数中。这样会花费较多时间，因为median函数会通过调用sort从而改变它的参数值。但是同时也有好处，因为sort所做的改变不会反馈到调用函数中。
+vector<double> homework;
+vector<double>& hw = homework; //hw是homework 的一个替代名。叫做常量引用。对它访问相当于对关联变量直接访问，而不用我们去复制，节省开销。
+对hw所做的任何动作都等价于对homework 做同样的动作。但是因为是const，不会改变它的值。
+重载：可以让几个函数有同样的函数名。同时，要提供一个函数列表，系统环境能够根据第n个参数的类型来辨别我们所指的函数。
+homework 向量的大小：homework.size()
+
+*Dec 30
+**读家庭作业成绩 L4
+
+//读一个输入流，把家庭作业成绩读进一个vector<double>类型的向量中
+istream& read_hw(istream& in, vector<double>& hw) 
+{
+	return in;
+}
+一个不含const的引用参数通常表示我们可以修改作为函数参数的对象的值。
+例如，执行
+vector<double> homework;
+read_hw(cin, homework);
+read_hw 的第二个参数是一个引用。对read_hw的调用会改变homework的值。
+read_hw函数的两个参数都是引用，我们希望用这个函数改变两个参数的状态。
+为了使程序更可靠，要增加细节。调用in.clear()来清除in内部的错误状态，这样就会让库忽略失败情况而继续输入了。同时，在试图读入第一个成绩前，有可能已经读尽了所有输入或碰到了出错。这样的话，就必须让输入流不受干涉。
+#include <iostream>
+#include <vector>
+using namespace std;
+//从输入流中将家庭作业的成绩读入到一个vector<double>中
+istream read_hw(istream& in, vector<double>& hw)
+{
+    if(in)
+    {
+        //清除原先的内容
+        hw.clear();
+        //读家庭作业成绩
+        double x;
+        while (in >> x)
+            hw.push_back(x);
+        //清除流以使输入动作对下一个学生有效
+        in.clear();
+    }
+    return in;
+}
+clear 成员在为istream服务时所表现出来的行为特性，跟它在为对象服务时的是完全不同的。对于istream对象，它清除了所有的错误标记以使输入动作继续。对于向量对象，它删除了向量中可能已经含有的全部内容，这样就会让我们再次拥有一个空的向量。
+函数有一个类型为vector<double>&的参数，在这里并没有const,同样的，&让系统环境直接地把参数和参数连接起来。这样我们就可以避免对参数的复制了。不过在这里，我们之所以要避免复制操作是因为函数要改变参数的值。
+与非常量引用对应的参数必须是左值。也就是说，它们必须是非临时对象。按值传递或与一个常量引用连接在一起的参数可以取任何值。例如，假定我们有一个返回空向量的函数。
+//返回空向量的函数
+vector<double> emptyvec()
+{
+    vector<double> v; //没有元素
+    return v;
+}
+我们可以调用这个函数并且使用其结果。grade(midterm, final, emptyvec());
+在运行的时候，grade函数会马上抛出一个异常，这是因为它的参数为空。然而，从语法上，这样的调用是合法的。
+在我们调用read_hw的时候，它的两个参数都必须是左值，这是因为它的两个参数都是非常量引用。
+read_hw(cin,emptyvec()); // 错误：emptyvec()不是左值
+编译器就会提示出错，因为我们在调用emptyvec()时所创建的那个未命名的向量将会在read_hw返回时立即消失。如果我们这样调用，那结果就是，我们把输入存进了我们无法访问的对象中。
+
+
 *Nov 2
 **Using String 
 
@@ -92,3 +153,65 @@ sort (homework.begin), homework.end()); The sort function reorders the data in t
 
 The "sort()" function simply adjusts the relative order of the element values in the original container, rather than creating a new container to store the sorted results.
 Find out the median: "vec_sz mid = size/2; double median; median = size % 2 == 0? (homework[mid] + homework[mid-1])/2 : homework[mid];" If the number of data contained in the vector is even, what is the median number? It's the average of No.mid and No.(mid+1). Because the index starts from zero, it is the average of homework[mid] and homework[mid-1]. If it's an odd number, then the median is No.(size+1)/2, which is indexed as "homework[(size-1)/2] = homework[mid]". Mid is the result of size/2 rounding down.
+
+*Dec23
+**Organizational Computing L3
+
+Throw out exceptions: for example, throw domain_error ("median of an empty vector");
+When we call a function, we can think of the argument as a local variable whose initial value is equal to the argument. When a function is called, the argument is also copied to the argument. This takes more time because the median function changes its parameter value by calling sort. But it's also beneficial because the changes that sort makes are not fed back into the calling function.
+vector<double> homework;
+Vector<double> and hw is an alternative name for homework. This is called a constant reference. Access to it is equivalent to direct access to the associated variable, without us copying, saving money.
+Any action we do with hw is equivalent to doing the same for homework. But because it's const, it doesn't change its value.
+Overload: We can make several functions have the same function name. At the same time, to provide a list of functions, the system environment is able to distinguish the function we refer to based on the type of the nth argument.
+Homework vector size: homework.size()
+  
+*Dec30
+**Read homework scores L4
+
+//Read an input stream and read homework scores into a vector <double> type vector
+istream and read_hw (istream and in, vector<double> and hw) 
+{
+	return in;
+}
+A reference parameter without const usually means that we can modify the value of the object as a function argument.
+For example, 
+vector<double> homework;
+read_hw (cin, homework);
+The second argument of the read_hw is a reference. Calls to read_hw change the value of homework.
+Both parameters of the function read_hw (cin, homework) are references, and we want to use this function to change the state of both parameters.
+To make the program more reliable, add details. Call in.clear() to clear the error state inside the in, which allows the library to ignore the failure and continue typing. At the same time, before attempting to read the first score, it is possible that all inputs have been read or that an error has been made. In this case, the input flow must be kept uninterfered.
+#include<iostream>
+#include<vector>
+using namespace std;
+//Read homework scores into a vector <double> from the input stream
+istream read_hw (istream and in, vector<double> and hw)
+{
+    if(in)
+    {
+        //Clear the original content
+        hw.clear ()
+        //Read homework scores
+        double x;
+        while (in s s x)
+            hw.push_back (x);
+        //Clear the stream to make the input action valid for the next student
+        in.clear ()
+    }
+    return in;
+}
+The behavior characteristics that clear members exhibit when they serve istream are completely different from when they are serving objects. For the istream object, it clears all error marks to allow the input action to continue. For vector objects, it removes everything that might already be contained in the vector, which gives us an empty vector again.
+
+The function has a parameter of a type vector<double> , and there is no const here, the same is, & makes the system environment directly connect the one parameter to another. This way we can avoid copying parameters. Here, however, we want to avoid copying because the function changes the value of the argument.
+The argument corresponding to the unusual reference must be an lvalue. That is, they must be non-temporary objects. Arguments passed by value or connected to a constant reference can take any value. For example, suppose we have a function that returns an empty vector.
+//A function that returns an empty vector
+vector<double> emptyvec()
+{
+    vector<double> v; //No elements
+    return v;
+}
+We can call this function and use its results. grade (intin, final, emptyvec());
+When running, the grad function immediately throws an exception because its arguments are empty. However, grammatically, such calls are legal.
+When we call read_hw, both of its arguments must be left-values because both of its arguments are very quantitative references.
+read_hw (cin, emptyvec()); //Error: emptyvec () is not a lat
+The compiler will prompt an error because the unnamed vector we created when we called emptyvec() will disappear as soon as the read_hw returns. If we call like this, the result is that we save the input in an object that we cannot access.
+
