@@ -108,6 +108,22 @@ vector<double> emptyvec()
 read_hw(cin,emptyvec()); // 错误：emptyvec()不是左值
 编译器就会提示出错，因为我们在调用emptyvec()时所创建的那个未命名的向量将会在read_hw返回时立即消失。如果我们这样调用，那结果就是，我们把输入存进了我们无法访问的对象中。
 
+**L5
+
+try语句：
+它尝试执行在{}中紧跟在try关键字之后的语句。如果在这些语句中的任何地方发生了一个domain_error异常，那么它就会停止执行这些语句，然后转去执行另外的一系列用{}括起的语句。这些语句是catch（捕获）子句的一部分，catch子句从关键字catch开始，它指示了所捕获的异常的类型。
+如果在try和catch之间的语句没有引发异常而正常结束的话，那么程序就会跳过全部的catch子句，从而继续执行下一条语句，return 0;
+每当编写一条try语句的时候，我们都必须认真地考虑副作用及副作用发生的时刻。我们必须假定在try和catch之间的任何东西都有可能引发异常。在异常发生后，所有本来应该执行的运算都会被跳过。一个在时间上本来是跟在异常之后执行的运算，在程序正文中是没有必要位于异常发生的地点之后的。
+//这个例子不能正常工作
+try {
+	streamsize prec = cout.precision();
+	cout << "Your final grade is " << setprecision(3) << grade(midterm, final, homeworl) << setprecision(prec);
+}
+在这个重写的代码中的问题是，虽然系统环境需要从左向右地执行<<运算符，但是它并不需要按照任何特定的顺序来对操作数进行计算。它可能输出了Your final grade is之后就马上调用grade函数。假如grade抛出异常，那么输出就有可能包含了上面的短语。此外，对setprecision的第一次调用会把输出流的精度设为３，第二次调用则可能根本不能获得机会重新设成原来的值。另外，系统可能会在写任何输出之前就调用了grade语句。
+因此我们要把输出块语句分割成两部分：第一条语句确保了，在产生任何的输出之前程序就调用了grade。我们有一条经验规则————也就是，我们要保证在一条语句的副作用个数不会超过一个。抛出一个异常是一个副作用，因此在一条可能会引发异常的语句中不应该再出现任何其他的副作用，尤其是包含有输入和输出的语句。
+
+
+
 
 *Nov 2
 **Using String 
@@ -214,4 +230,18 @@ When running, the grad function immediately throws an exception because its argu
 When we call read_hw, both of its arguments must be left-values because both of its arguments are very quantitative references.
 read_hw (cin, emptyvec()); //Error: emptyvec () is not a lat
 The compiler will prompt an error because the unnamed vector we created when we called emptyvec() will disappear as soon as the read_hw returns. If we call like this, the result is that we save the input in an object that we cannot access.
+
+**L5
+
+try statement:
+It tries to execute a statement that follows the try keyword. If an domain_error exception occurs anywhere in these statements, it stops executing those statements and then goes on to execute a series of other statements that are surrounded by. These statements are part of the catch clause, which starts with the keyword catch, which indicates the type of exception that is caught.
+If the statement between try and catch ends normally without throwing an exception, the program skips all the catch clauses and proceeds to the next statement, return 0;
+Whenever we write a try statement, we have to seriously consider the moment of side effects and side effects. We must assume that anything between try and catch can cause an anomaly. After an exception occurs, all operations that should have been performed are skipped. An operation that would have been performed after an exception in time is not necessary in the body of the program after where the exception occurred.
+This example doesn't work
+try{
+	streamsize prec = cout.precision ();
+	cout << "Your final grade is" << setprecision (3) << grade (midterm, final, homework) << setprecision(prec);
+}
+The problem with this rewritten code is that although the system environment needs to execute the operator from left to right, it does not need to calculate the number of operations in any particular order. It may have output your final grade is and call the grade function as soon as it is. If the grade throws an exception, the output may contain the phrase above. In addition, the first call to setprecision sets the accuracy of the output stream to 3, and the second call may not have the opportunity to reset the original value at all. In addition, the system may call the grade statement before writing any output.
+So we're going to split the output block statement into two parts: the first statement ensures that the program calls the grade before any output is produced. We have a rule of thumb———— that is, we want to make sure that the number of side effects in a statement does not exceed one. Throwing an exception is a side effect, so no other side effects should occur in a statement that might throw an exception, especially one that contains input and output.
 
